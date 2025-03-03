@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { executeRdsSql, type Config } from "./executeRdsSql.js";
+import { QueryType } from "./hasAuthority.js";
 
 // Check if all required development config values are present
 const devConfig: Config | null = (
@@ -44,7 +45,7 @@ if (devConfig) {
         { sql: z.string() },
         async ({ sql: query }) => {
             try {
-                const results = await executeRdsSql(devConfig, query);
+                const results = await executeRdsSql(devConfig, QueryType.SELECT, query);
 
                 return {
                     content: [{ type: "text", text: results || "No results returned" }]
@@ -66,7 +67,7 @@ if (prodConfig) {
         { sql: z.string() },
         async ({ sql: query }) => {
             try {
-                const results = await executeRdsSql(prodConfig, query);
+                const results = await executeRdsSql(prodConfig, QueryType.SELECT, query);
 
                 return {
                     content: [{ type: "text", text: results || "No results returned" }]
