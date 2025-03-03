@@ -1,0 +1,13 @@
+{
+    "name": "@mcp-servers/sql",
+    "version": "0.0.1",
+    "type": "module",
+    "module": "index.ts",
+    "dependencies": {
+        "@aws-sdk/client-rds-data": "^3.758.0",
+        "@aws-sdk/credential-provider-sso": "^3.758.0",
+        "@modelcontextprotocol/sdk": "^1.6.1",
+        "node-sql-parser": "^5.3.6",
+        "zod": "^3.24.2"
+    }
+}
