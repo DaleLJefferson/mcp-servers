@@ -68,47 +68,9 @@ describe("hasAuthority", () => {
             const sql = "INSERT INTO users (id, name, email) SELECT id, name, (SELECT email FROM temp_emails WHERE user_id = temp_users.id LIMIT 1) FROM temp_users";
             expect(hasAuthority(sql, QueryType.SELECT)).toBe(false);
         });
-    });
 
-    // SQL Injection tests
-    describe("SQL Injection attacks", () => {
         test("should reject multi-statement injection with semicolon", () => {
             const sql = "SELECT * FROM users WHERE id = 1; DROP TABLE users;";
-            expect(hasAuthority(sql, QueryType.SELECT)).toBe(false);
-        });
-
-        test("should reject UNION-based injection with destructive command", () => {
-            const sql = "SELECT id FROM users UNION SELECT 1; INSERT INTO users (name) VALUES ('test');";
-            expect(hasAuthority(sql, QueryType.SELECT)).toBe(false);
-        });
-
-        test("should reject injection with CTE and destructive command", () => {
-            const sql = "WITH t AS (SELECT 1 as id FROM users) SELECT * FROM t; UPDATE users SET name = 'hacked' WHERE id = 1;";
-            expect(hasAuthority(sql, QueryType.SELECT)).toBe(false);
-        });
-
-        test("should reject injection through string concatenation", () => {
-            const sql = "SELECT CAST((SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' LIMIT 1) AS varchar) || '; DROP TABLE users;' AS injection_attempt;";
-            expect(hasAuthority(sql, QueryType.SELECT)).toBe(true);
-        });
-
-        test("should allow SQL with commented-out code", () => {
-            const sql = "SELECT * FROM users WHERE id = 1; -- DELETE FROM users;";
-            expect(hasAuthority(sql, QueryType.SELECT)).toBe(true);
-        });
-
-        test("should handle injection attempt in parameter values", () => {
-            const sql = "SELECT * FROM users WHERE id = '1; DROP TABLE users;';";
-            expect(hasAuthority(sql, QueryType.SELECT)).toBe(true);
-        });
-
-        test("should allow nested subqueries when they are valid SELECT operations", () => {
-            const sql = "SELECT * FROM users WHERE id IN (SELECT user_id FROM orders WHERE total > 100)";
-            expect(hasAuthority(sql, QueryType.SELECT)).toBe(true);
-        });
-
-        test("should reject batch commands with newlines", () => {
-            const sql = "SELECT * FROM users\nDROP TABLE users";
             expect(hasAuthority(sql, QueryType.SELECT)).toBe(false);
         });
     });

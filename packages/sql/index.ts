@@ -34,14 +34,14 @@ const server = new McpServer({
     name: "sql",
     version: "1.0.0"
 }, {
-    instructions: "This is a SQL server. Use the correct environment and method",
+    instructions: "Choose the correct tool {enviroment}_{query_type} to perform the query",
 });
 
 // Conditionally register development tool if dev config exists
 if (devConfig) {
     server.tool(
         "dev_select",
-        "Perform a select query in the development database",
+        "Perform a SELECT query in the development database",
         { sql: z.string() },
         async ({ sql: query }) => {
             try {
@@ -63,7 +63,7 @@ if (devConfig) {
 if (prodConfig) {
     server.tool(
         "prod_select",
-        "Perform a select query in the production database",
+        "Perform a SELECT query in the production database",
         { sql: z.string() },
         async ({ sql: query }) => {
             try {
