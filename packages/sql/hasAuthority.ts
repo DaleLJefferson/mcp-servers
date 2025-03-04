@@ -5,21 +5,16 @@ export enum QueryType {
 }
 
 export function hasAuthority(sql: string, queryType: QueryType): boolean {
-    if (sql.trim() === "") {
-        return false;
-    }
-
     const parser = new Parser();
 
     try {
-        const error = parser.whiteListCheck(sql, [`${queryType}::(.*):(.*)`], { type: 'table' });
+        const {tableList} = parser.parse(sql);
 
-        if (error) {
-            throw error;
-        }
+        const methods = new Set(tableList.map((table) => table.split(":")[0]));
 
-        return true;
-    } catch (error) {
+        // Check if methods only contains the queryType and nothing else
+        return methods.size === 1 && methods.has(queryType);
+    } catch (error: unknown) {
         return false;
     }
 }
