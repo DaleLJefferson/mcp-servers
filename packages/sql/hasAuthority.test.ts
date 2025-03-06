@@ -69,6 +69,11 @@ describe("hasAuthority", () => {
             expect(hasAuthority(sql, QueryType.SELECT)).toBe(false);
         });
 
+        test("should allow EXPLAIN ANALYZE query for SELECT", () => {
+            const sql = "EXPLAIN ANALYZE SELECT * FROM users WHERE id = 1";
+            expect(hasAuthority(sql, QueryType.SELECT)).toBe(true);
+        });
+
         test("should reject multi-statement injection with semicolon", () => {
             const sql = "SELECT * FROM users WHERE id = 1; DROP TABLE users;";
             expect(hasAuthority(sql, QueryType.SELECT)).toBe(false);
