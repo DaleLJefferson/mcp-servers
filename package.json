@@ -1,0 +1,17 @@
+{
+  "name": "mcp-servers",
+  "workspaces": [
+    "packages/*"
+  ],
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5",
+    "@modelcontextprotocol/inspector": "0.6.0"
+  },
+  "scripts": {
+    "inspect:git": "bun mcp-inspector bun run --watch packages/git"
+  }
+}
