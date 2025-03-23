@@ -5,7 +5,7 @@ import { simpleGit } from "simple-git";
 
 export default (server: McpServer) => {
   // Helper function for shared git add logic
-  const gitAdd = async (repoPath: string, files: string[]) => {
+  const gitAdd = async (repoPath: string, files: Array<string>) => {
     const git = simpleGit(repoPath);
     await git.add(files);
     return textResponse("Success");
