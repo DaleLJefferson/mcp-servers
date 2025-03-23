@@ -5,7 +5,7 @@ import { simpleGit } from "simple-git";
 export default (server: McpServer) => {
   server.tool(
     "status",
-    "git status",
+    "git status --short",
     {
       repoPath,
     },
@@ -14,24 +14,13 @@ export default (server: McpServer) => {
 
       const status = await git.status();
 
-      // Build a simplified status message using template string
-      const statusText = `
-Branch ${status.current}
+      const files = status.files
+        .map(({ working_dir, path }) => {
+          return `${working_dir} ${path}`;
+        })
+        .join("\n");
 
-Unstaged
-
-${status.modified.join("\n")}
-
-Untracked
-
-${status.not_added.join("\n")}
-
-Staged
-
-${status.staged.join("\n")}
-`;
-
-      return textResponse(statusText);
+      return textResponse(files);
     }
   );
 };
