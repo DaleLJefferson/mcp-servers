@@ -4,6 +4,7 @@ import branch from "./tools/branch";
 import add from "./tools/add";
 import commit from "./tools/commit";
 import push from "./tools/push";
+import status from "./tools/status";
 
 const server = new McpServer({
   name: "Git",
@@ -12,6 +13,7 @@ const server = new McpServer({
 
 // Register all tools
 branch(server);
+status(server);
 add(server);
 commit(server);
 push(server);
