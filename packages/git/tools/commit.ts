@@ -10,11 +10,15 @@ export default (server: McpServer) => {
     {
       repoPath,
       message: z.string().describe("The commit message"),
+      files: z
+        .array(z.string())
+        .optional()
+        .describe("The files to commit, defaults to all staged"),
     },
-    async ({ repoPath, message }) => {
+    async ({ repoPath, message, files }) => {
       const git = simpleGit(repoPath);
 
-      await git.commit(message);
+      await git.commit(message, files);
 
       return textResponse("Success");
     }
