@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
+import { repoPath, textResponse } from "./utils.js";
 import { simpleGit } from "simple-git";
 
 export default (server: McpServer) => {
@@ -7,16 +7,14 @@ export default (server: McpServer) => {
     "push",
     "git push",
     {
-      repoPath: z.string().describe("The absolute path to the git repository"),
+      repoPath,
     },
     async ({ repoPath }) => {
       const git = simpleGit(repoPath);
 
       await git.push();
 
-      return {
-        content: [{ type: "text", text: "Success" }],
-      };
+      return textResponse("Success");
     }
   );
 };

@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { repoPath, textResponse } from "./utils.js";
 import { simpleGit } from "simple-git";
 
 export default (server: McpServer) => {
@@ -7,9 +8,7 @@ export default (server: McpServer) => {
   const gitAdd = async (repoPath: string, files: string[]) => {
     const git = simpleGit(repoPath);
     await git.add(files);
-    return {
-      content: [{ type: "text" as const, text: "Success" }],
-    };
+    return textResponse("Success");
   };
 
   // Add specific files
@@ -17,7 +16,7 @@ export default (server: McpServer) => {
     "add",
     "git add <files>",
     {
-      repoPath: z.string().describe("The absolute path to the git repository"),
+      repoPath,
       files: z.array(z.string()).describe("The files to add"),
     },
     async ({ repoPath, files }) => gitAdd(repoPath, files)
@@ -28,7 +27,7 @@ export default (server: McpServer) => {
     "add_all",
     "git add .",
     {
-      repoPath: z.string().describe("The absolute path to the git repository"),
+      repoPath,
     },
     async ({ repoPath }) => gitAdd(repoPath, ["."])
   );
