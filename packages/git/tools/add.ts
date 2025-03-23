@@ -17,8 +17,8 @@ export default (server: McpServer) => {
     "add",
     "git add <files>",
     {
-      repoPath: z.string(),
-      files: z.array(z.string()),
+      repoPath: z.string().describe("The absolute path to the git repository"),
+      files: z.array(z.string()).describe("The files to add"),
     },
     async ({ repoPath, files }) => gitAdd(repoPath, files)
   );
@@ -28,7 +28,7 @@ export default (server: McpServer) => {
     "add_all",
     "git add .",
     {
-      repoPath: z.string(),
+      repoPath: z.string().describe("The absolute path to the git repository"),
     },
     async ({ repoPath }) => gitAdd(repoPath, ["."])
   );

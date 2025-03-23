@@ -7,8 +7,8 @@ export default (server: McpServer) => {
     "commit",
     "git commit -m <message>",
     {
-      repoPath: z.string(),
-      message: z.string(),
+      repoPath: z.string().describe("The absolute path to the git repository"),
+      message: z.string().describe("The commit message"),
     },
     async ({ repoPath, message }) => {
       const git = simpleGit(repoPath);

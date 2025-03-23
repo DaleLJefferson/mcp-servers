@@ -7,7 +7,7 @@ export default (server: McpServer) => {
     "push",
     "git push",
     {
-      repoPath: z.string(),
+      repoPath: z.string().describe("The absolute path to the git repository"),
     },
     async ({ repoPath }) => {
       const git = simpleGit(repoPath);
