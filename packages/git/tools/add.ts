@@ -8,7 +8,7 @@ export default (server: McpServer) => {
     const git = simpleGit(repoPath);
     await git.add(files);
     return {
-      content: [{ type: "text" as const, text: "success" }],
+      content: [{ type: "text" as const, text: "Success" }],
     };
   };
 

@@ -15,7 +15,7 @@ export default (server: McpServer) => {
       const { current } = await git.status();
 
       return {
-        content: [{ type: "text" as const, text: current ?? "No branch" }],
+        content: [{ type: "text", text: current ?? "No branch" }],
       };
     }
   );

@@ -16,7 +16,7 @@ export default (server: McpServer) => {
       await git.commit(message);
 
       return {
-        content: [{ type: "text" as const, text: "Commit successful" }],
+        content: [{ type: "text", text: "Success" }],
       };
     }
   );

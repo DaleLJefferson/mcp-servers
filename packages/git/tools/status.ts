@@ -14,35 +14,27 @@ export default (server: McpServer) => {
 
       const status = await git.status();
 
-      // Build a simplified status message
-      let statusText = `On branch ${status.current}\n\n`;
+      // Build a simplified status message using template string
+      const statusText = `
+Branch ${status.current}
 
-      // Unstaged changes
-      statusText += "Unstaged\n\n";
-      if (status.modified.length > 0) {
-        statusText +=
-          status.modified.map((file) => `${file}`).join("\n") + "\n";
-      }
-      statusText += "\n";
+Unstaged
 
-      // Untracked files
-      statusText += "Untracked\n\n";
-      if (status.not_added.length > 0) {
-        statusText +=
-          status.not_added.map((file) => `${file}`).join("\n") + "\n";
-      }
-      statusText += "\n";
+${status.modified.join("\n")}
 
-      // Staged changes
-      statusText += "Staged\n\n";
-      if (status.staged.length > 0) {
-        statusText += status.staged.map((file) => `${file}`).join("\n") + "\n";
-      }
+Untracked
+
+${status.not_added.join("\n")}
+
+Staged
+
+${status.staged.join("\n")}
+`;
 
       return {
         content: [
           {
-            type: "text" as const,
+            type: "text",
             text: statusText,
           },
         ],

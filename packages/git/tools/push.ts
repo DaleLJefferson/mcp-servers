@@ -5,19 +5,17 @@ import { simpleGit } from "simple-git";
 export default (server: McpServer) => {
   server.tool(
     "push",
-    "git push [remote] [branch]",
+    "git push",
     {
       repoPath: z.string(),
-      remote: z.string().optional(),
-      branch: z.string().optional(),
     },
-    async ({ repoPath, remote, branch }) => {
+    async ({ repoPath }) => {
       const git = simpleGit(repoPath);
 
-      await git.push(remote, branch);
+      await git.push();
 
       return {
-        content: [{ type: "text" as const, text: "Push successful" }],
+        content: [{ type: "text", text: "Success" }],
       };
     }
   );
