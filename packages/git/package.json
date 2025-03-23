@@ -1,5 +1,5 @@
 {
-  "name": "git",
+  "name": "@mcp-servers/git",
   "version": "0.0.1",
   "main": "git.ts",
   "type": "module",
