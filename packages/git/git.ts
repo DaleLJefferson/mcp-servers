@@ -3,10 +3,8 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { simpleGit } from "simple-git";
 import { z } from "zod";
 
-// Shared parameter definition for git tools
 const repoPath = z.string().describe("The absolute path to the git repository");
 
-// Helper function to create a simple text response
 const textResponse = (text: string) => ({
   content: [{ type: "text" as const, text }],
 });
@@ -16,7 +14,6 @@ const server = new McpServer({
   version: "1.0.0",
 });
 
-// Register status tool
 server.tool(
   "status",
   "git status --short",
@@ -34,17 +31,16 @@ server.tool(
       })
       .join("\n");
 
-    return textResponse(files);
+    return textResponse(files.length > 0 ? files : "None");
   }
 );
 
-// Register add tool
 server.tool(
   "add",
   "git add <files>",
   {
     repoPath,
-    files: z.array(z.string()).describe("The files to add, use . for all"),
+    files: z.array(z.string()).describe("Relative paths to files to add"),
   },
   async ({ repoPath, files }) => {
     const git = simpleGit(repoPath);
@@ -53,28 +49,35 @@ server.tool(
   }
 );
 
-// Register commit tool
 server.tool(
-  "commit",
+  "add_all",
+  "git add .",
+  {
+    repoPath,
+  },
+  async ({ repoPath }) => {
+    const git = simpleGit(repoPath);
+    await git.add(".");
+    return textResponse("Success");
+  }
+);
+
+server.tool(
+  "commit_staged",
   "git commit -m <message>",
   {
     repoPath,
     message: z.string().describe("The commit message"),
-    files: z
-      .array(z.string())
-      .optional()
-      .describe("The files to commit, defaults to all staged"),
   },
-  async ({ repoPath, message, files }) => {
+  async ({ repoPath, message }) => {
     const git = simpleGit(repoPath);
 
-    await git.commit(message, files);
+    await git.commit(message);
 
     return textResponse("Success");
   }
 );
 
-// Register push tool
 server.tool(
   "push",
   "git push",
@@ -90,23 +93,80 @@ server.tool(
   }
 );
 
-// Register diff tool
 server.tool(
   "diff",
-  "git diff [args]",
+  "git diff",
   {
     repoPath,
-    args: z
-      .array(z.string())
-      .optional()
-      .describe("The arguments to pass to git diff"),
   },
-  async ({ repoPath, args }) => {
+  async ({ repoPath }) => {
     const git = simpleGit(repoPath);
 
-    const diff = await git.diff(args);
+    const diff = await git.diff();
 
-    return textResponse(diff || "No changes detected");
+    return textResponse(diff || "None");
+  }
+);
+
+server.tool(
+  "diff_staged",
+  "git diff --staged",
+  {
+    repoPath,
+  },
+  async ({ repoPath }) => {
+    const git = simpleGit(repoPath);
+
+    const diff = await git.diff(["--staged"]);
+
+    return textResponse(diff || "None");
+  }
+);
+
+server.tool(
+  "current_branch",
+  "git branch --show-current",
+  {
+    repoPath,
+  },
+  async ({ repoPath }) => {
+    const git = simpleGit(repoPath);
+
+    const branch = await git.branch();
+
+    return textResponse(branch.current);
+  }
+);
+
+server.tool(
+  "create_branch",
+  "git branch <name>",
+  {
+    repoPath,
+    name: z.string().describe("The name of the branch to create"),
+  },
+  async ({ repoPath, name }) => {
+    const git = simpleGit(repoPath);
+
+    await git.branch([name]);
+
+    return textResponse(`Branch '${name}' created successfully`);
+  }
+);
+
+server.tool(
+  "checkout_branch",
+  "git checkout <name>",
+  {
+    repoPath,
+    name: z.string().describe("The name of the branch to checkout"),
+  },
+  async ({ repoPath, name }) => {
+    const git = simpleGit(repoPath);
+
+    await git.checkout(name);
+
+    return textResponse(`Switched to branch '${name}'`);
   }
 );
 
