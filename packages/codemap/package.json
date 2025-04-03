@@ -1,0 +1,12 @@
+{
+  "name": "@mcp-servers/codemap",
+  "version": "0.0.1",
+  "main": "codemap.ts",
+  "type": "module",
+  "dependencies": {
+    "@google/genai": "^0.7.0",
+    "@modelcontextprotocol/sdk": "1.7.0",
+    "globby": "^14.1.0",
+    "zod": "3.24.2"
+  }
+}
